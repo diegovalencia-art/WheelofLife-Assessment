@@ -8,117 +8,123 @@ const FOOTER_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4QAAAC0CAYA
 function App() {
 
   const sections = [
+
     {
       id: "career",
-      title: "Career",
-      subtitle: "Does this area energize you, drain you, or leave you feeling indifferent?"
+      title: "Career Assessment",
+      subtitle: "Does this area energize you, drain you, or leave you feeling indifferent?",
       questions: [
         "I feel fulfilled in the work I do.",
-        "I am progressing professionally.",
-        "My daily tasks align with goals.",
-        "I seek growth opportunities.",
-        "I feel valued at work.",
-        "I perform at high competence.",
-        "I have clear objectives.",
+        "I am progressing in my career or professional goals.",
+        "My daily tasks align with my long-term vision.",
+        "I regularly seek growth opportunities.",
+        "I feel valued in my workplace.",
+        "I perform at my highest competence.",
+        "I have clear goals.",
         "My talents align with my work.",
         "I maintain work-life balance.",
-        "I feel excited about my work."
+        "I feel excited to work most days."
       ]
     },
+
     {
       id: "financial",
-      title: "Financial",
+      title: "Financial Assessment",
       subtitle: "Is this area stable and empowering or stressful?",
       questions: [
-        "I control my spending.",
+        "I have control over my spending.",
         "I save consistently.",
-        "I manage debt well.",
-        "I invest long-term.",
+        "I understand my financial goals.",
+        "I am reducing or managing debt.",
+        "I invest in long-term growth.",
         "I feel financially secure.",
-        "I plan expenses ahead.",
-        "I track finances regularly.",
-        "I build assets.",
-        "I feel confident financially.",
-        "I have financial clarity."
+        "I plan my expenses ahead.",
+        "I track my finances regularly.",
+        "I am building assets.",
+        "I feel confident about my financial future."
       ]
     },
+
     {
       id: "spiritual",
-      title: "Spiritual",
-      subtitle: "Are you aligned with purpose and meaning?",
+      title: "Spiritual Assessment",
+      subtitle: "Do you feel aligned with meaning and purpose?",
       questions: [
-        "I live according to my values.",
-        "I feel spiritually connected.",
-        "I practice reflection regularly.",
+        "I live according to my core values.",
+        "I feel connected to something greater.",
+        "I practice reflection or prayer regularly.",
         "I experience inner peace.",
         "I feel guided by purpose.",
-        "I release resentment.",
-        "I grow spiritually.",
+        "I forgive and release resentment.",
+        "I grow spiritually over time.",
         "I align actions with beliefs.",
-        "I practice gratitude.",
-        "I trust life’s process."
+        "I feel gratitude daily.",
+        "I trust the process of life."
       ]
     },
+
     {
       id: "physical",
-      title: "Physical",
+      title: "Physical Assessment",
       subtitle: "Is your body supported and energized?",
       questions: [
         "I exercise consistently.",
         "I sleep adequately.",
         "I eat nourishing foods.",
         "I maintain healthy habits.",
-        "I feel energized.",
+        "I feel energized most days.",
         "I hydrate properly.",
         "I manage stress physically.",
-        "I attend checkups.",
+        "I attend medical checkups.",
         "I avoid harmful habits.",
         "I respect my body."
       ]
     },
+
     {
       id: "intellectual",
-      title: "Intellectual",
+      title: "Intellectual Assessment",
       subtitle: "Are you mentally stimulated and growing?",
       questions: [
-        "I learn consistently.",
+        "I read or learn consistently.",
         "I challenge my thinking.",
         "I seek new ideas.",
         "I develop new skills.",
         "I reflect on experiences.",
         "I improve critical thinking.",
         "I ask meaningful questions.",
-        "I explore creativity.",
-        "I invest in growth.",
+        "I explore creative outlets.",
+        "I invest in personal development.",
         "I stay curious."
       ]
     },
+
     {
       id: "social",
-      title: "Social",
+      title: "Social Assessment",
       subtitle: "Does this area energize you, drain you, or leave you feeling indifferent?",
       questions: [
-        "I have friends I trust.",
-        "I accept invitations regularly.",
-        "I feel seen socially.",
-        "I support and feel supported.",
+        "I have a circle of friends I trust and enjoy.",
+        "I initiate or accept social invitations regularly.",
+        "I feel seen and accepted in my social groups.",
+        "I support and am supported by my friends.",
         "I enjoy meaningful conversations.",
-        "I laugh with others.",
-        "I manage conflict well.",
+        "I laugh and experience joy with people.",
+        "I manage social conflict constructively.",
         "I make time for friends.",
-        "I feel belonging.",
-        "I invest deeply in relationships."
+        "I feel like I belong somewhere.",
+        "I invest beyond surface-level interactions."
       ]
     }
+
   ];
 
   const [started, setStarted] = useState(false);
   const [completed, setCompleted] = useState(false);
-  const [showSummary, setShowSummary] = useState(false);
   const [current, setCurrent] = useState(0);
+  const [error, setError] = useState("");
   const [name, setName] = useState("");
   const [answers, setAnswers] = useState({});
-  const [error, setError] = useState("");
 
   const progress = Math.round(((current + 1) / sections.length) * 100);
 
@@ -137,29 +143,7 @@ function App() {
     const values = answers[sectionId];
     if (!values || Object.keys(values).length < 10) return 0;
     const total = Object.values(values).reduce((a, b) => a + b, 0);
-    return parseFloat((total / 10).toFixed(1));
-  };
-
-  const getAllScores = () =>
-    sections.map(section => ({
-      title: section.title,
-      score: calculateAverage(section.id)
-    }));
-
-  const getLowest = () =>
-    getAllScores().reduce((min, curr) =>
-      curr.score < min.score ? curr : min
-    );
-
-  const getHighest = () =>
-    getAllScores().reduce((max, curr) =>
-      curr.score > max.score ? curr : max
-    );
-
-  const getColor = (score) => {
-    if (score <= 4) return "#ef4444";
-    if (score <= 7) return "#f59e0b";
-    return "#10b981";
+    return (total / 10).toFixed(1);
   };
 
   const validateSection = () => {
@@ -170,7 +154,7 @@ function App() {
 
     const sectionAnswers = answers[sections[current].id];
     if (!sectionAnswers || Object.keys(sectionAnswers).length < 10) {
-      setError("Complete all ratings.");
+      setError("Please complete all 10 ratings.");
       return false;
     }
 
@@ -180,97 +164,11 @@ function App() {
   const next = () => {
     if (!validateSection()) return;
     setError("");
-    if (current < sections.length - 1) {
-      setCurrent(current + 1);
-    } else {
-      setShowSummary(true);
-    }
+    setCurrent(current + 1);
   };
 
   /* ===============================
-     PURE SVG RADAR
-  =============================== */
-
-  const RadarChart = ({ scores }) => {
-    const size = 400;
-    const center = size / 2;
-    const radius = 130;
-    const angleStep = (2 * Math.PI) / scores.length;
-
-    const getPoint = (value, index) => {
-      const scaled = (value / 10) * radius;
-      const angle = index * angleStep - Math.PI / 2;
-      return {
-        x: center + scaled * Math.cos(angle),
-        y: center + scaled * Math.sin(angle)
-      };
-    };
-
-    const points = scores.map((s, i) => {
-      const p = getPoint(s.score, i);
-      return `${p.x},${p.y}`;
-    }).join(" ");
-
-    return (
-      <svg width={size} height={size}>
-        {[...Array(5)].map((_, i) => (
-          <circle
-            key={i}
-            cx={center}
-            cy={center}
-            r={((i + 1) / 5) * radius}
-            fill="none"
-            stroke="#e5e7eb"
-          />
-        ))}
-
-        {scores.map((_, i) => {
-          const angle = i * angleStep - Math.PI / 2;
-          const x = center + radius * Math.cos(angle);
-          const y = center + radius * Math.sin(angle);
-          return (
-            <line
-              key={i}
-              x1={center}
-              y1={center}
-              x2={x}
-              y2={y}
-              stroke="#e5e7eb"
-            />
-          );
-        })}
-
-        <polygon
-          points={points}
-          fill="rgba(15,118,110,0.3)"
-          stroke="#0f766e"
-          strokeWidth="2"
-        />
-
-        {scores.map((s, i) => {
-          const angle = i * angleStep - Math.PI / 2;
-          const labelRadius = radius + 20;
-          const x = center + labelRadius * Math.cos(angle);
-          const y = center + labelRadius * Math.sin(angle);
-          return (
-            <text
-              key={i}
-              x={x}
-              y={y}
-              textAnchor="middle"
-              fontSize="12"
-              fill="#334155"
-            >
-              {s.title}
-            </text>
-          );
-        })}
-      </svg>
-    );
-  };
-
-  /* ===============================
-     PDF GENERATION
+     PDF GENERATION (SECTIONS ONLY)
   =============================== */
 
   const generatePDF = () => {
@@ -292,6 +190,7 @@ function App() {
     y += 12;
 
     doc.setFont("times", "normal");
+    doc.setFontSize(12);
     doc.text(`Student Name: ${name}`, 20, y);
     y += 8;
 
@@ -299,6 +198,7 @@ function App() {
     y += 15;
 
     sections.forEach(section => {
+
       if (y > pageHeight - 50) {
         doc.addPage();
         addHeaderFooter();
@@ -308,7 +208,7 @@ function App() {
       const avg = calculateAverage(section.id);
 
       doc.setFont(undefined, "bold");
-      doc.text(section.title, 20, y);
+      doc.text(`${section.title}`, 20, y);
       y += 6;
 
       doc.setFont(undefined, "normal");
@@ -322,7 +222,7 @@ function App() {
   };
 
   /* ===============================
-     SCREENS
+     DISCLAIMER PAGE
   =============================== */
 
   if (!started) {
@@ -330,14 +230,20 @@ function App() {
       <div style={styles.page}>
         <div style={styles.container}>
           <h1 style={{ color: "#0f766e" }}>
-            Wheel of Life 2.0 – Executive Diagnostic
+            Wheel of Life 2.0 – Master Assessment
           </h1>
+
           <ul>
-            <li>Rate each statement 1–10.</li>
-            <li>All ratings compulsory.</li>
-            <li>Summary dashboard included.</li>
+            <li>Rate each statement from 1–10.</li>
+            <li>All ratings are compulsory.</li>
+            <li>Section score is calculated automatically.</li>
+            <li>Download and upload your PDF.</li>
           </ul>
-          <button style={styles.primaryButton} onClick={() => setStarted(true)}>
+
+          <button
+            style={styles.primaryButton}
+            onClick={() => setStarted(true)}
+          >
             Start Assessment
           </button>
         </div>
@@ -345,39 +251,9 @@ function App() {
     );
   }
 
-  if (showSummary) {
-    const scores = getAllScores();
-    const lowest = getLowest();
-    const highest = getHighest();
-
-    return (
-      <div style={styles.page}>
-        <div style={styles.container}>
-          <h1 style={{ color: "#0f766e" }}>Assessment Summary</h1>
-
-          <RadarChart scores={scores} />
-
-          {scores.map((s, i) => (
-            <div key={i} style={styles.scoreRow}>
-              <span>{s.title}</span>
-              <span style={{ color: getColor(s.score), fontWeight: "bold" }}>
-                {s.score} / 10
-              </span>
-            </div>
-          ))}
-
-          <div style={styles.summaryBox}>
-            <p><strong>Highest Area:</strong> {highest.title} ({highest.score}/10)</p>
-            <p><strong>Lowest Area:</strong> {lowest.title} ({lowest.score}/10)</p>
-          </div>
-
-          <button style={styles.primaryButton} onClick={generatePDF}>
-            Download My Assessment
-          </button>
-        </div>
-      </div>
-    );
-  }
+  /* ===============================
+     COMPLETION PAGE
+  =============================== */
 
   if (completed) {
     return (
@@ -386,8 +262,16 @@ function App() {
           <h2 style={{ color: "#0f766e" }}>
             Your PDF Has Been Downloaded
           </h2>
-          <p>Upload it in the assignment box.</p>
-          <button style={styles.retryButton} onClick={generatePDF}>
+
+          <p>
+            Now go to the bottom of this page and upload the document
+            in the Assignment Submission Box.
+          </p>
+
+          <button
+            style={styles.retryButton}
+            onClick={generatePDF}
+          >
             Click Here to Retry Download
           </button>
         </div>
@@ -410,7 +294,9 @@ function App() {
         />
 
         <div style={styles.progressWrapper}>
-          <div style={{ ...styles.progressBar, width: `${progress}%` }} />
+          <div
+            style={{ ...styles.progressBar, width: `${progress}%` }}
+          />
         </div>
 
         <h2>{section.title}</h2>
@@ -419,10 +305,14 @@ function App() {
         {section.questions.map((q, i) => (
           <div key={i} style={styles.questionRow}>
             <span>{i + 1}. {q}</span>
+
             <div style={styles.numericBox}>
-              <button onClick={() =>
-                updateValue(section.id, i, (answers[section.id]?.[i] || 5) - 1)
-              }>−</button>
+              <button
+                onClick={() =>
+                  updateValue(section.id, i,
+                    (answers[section.id]?.[i] || 5) - 1)
+                }
+              >−</button>
 
               <input
                 type="number"
@@ -434,20 +324,31 @@ function App() {
                 }
               />
 
-              <button onClick={() =>
-                updateValue(section.id, i, (answers[section.id]?.[i] || 5) + 1)
-              }>+</button>
+              <button
+                onClick={() =>
+                  updateValue(section.id, i,
+                    (answers[section.id]?.[i] || 5) + 1)
+                }
+              >+</button>
             </div>
           </div>
         ))}
 
-        <h3>Section Score: {calculateAverage(section.id)} / 10</h3>
+        <h3>
+          Section Score: {calculateAverage(section.id)} / 10
+        </h3>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={styles.error}>{error}</p>}
 
-        <button style={styles.primaryButton} onClick={next}>
-          {current < sections.length - 1 ? "Next Section" : "View Summary"}
-        </button>
+        {current < sections.length - 1 ? (
+          <button style={styles.primaryButton} onClick={next}>
+            Next Section
+          </button>
+        ) : (
+          <button style={styles.primaryButton} onClick={generatePDF}>
+            Download My Assessment
+          </button>
+        )}
 
       </div>
     </div>
@@ -462,7 +363,7 @@ const styles = {
     fontFamily: "Georgia, serif"
   },
   container: {
-    maxWidth: "950px",
+    maxWidth: "900px",
     margin: "0 auto",
     backgroundColor: "white",
     padding: "40px",
@@ -476,17 +377,6 @@ const styles = {
     borderRadius: "6px",
     border: "1px solid #ccc"
   },
-  progressWrapper: {
-    height: "6px",
-    backgroundColor: "#e2e8f0",
-    borderRadius: "4px",
-    marginBottom: "20px"
-  },
-  progressBar: {
-    height: "100%",
-    backgroundColor: "#0f766e",
-    transition: "width 0.4s ease"
-  },
   questionRow: {
     display: "flex",
     justifyContent: "space-between",
@@ -499,17 +389,16 @@ const styles = {
     alignItems: "center",
     gap: "8px"
   },
-  scoreRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px 0",
-    borderBottom: "1px solid #eee"
+  progressWrapper: {
+    height: "6px",
+    backgroundColor: "#e2e8f0",
+    borderRadius: "4px",
+    marginBottom: "20px"
   },
-  summaryBox: {
-    marginTop: "20px",
-    padding: "15px",
-    backgroundColor: "#f8fafc",
-    borderRadius: "10px"
+  progressBar: {
+    height: "100%",
+    backgroundColor: "#0f766e",
+    transition: "width 0.4s ease"
   },
   primaryButton: {
     backgroundColor: "#0f766e",
@@ -517,8 +406,7 @@ const styles = {
     padding: "10px 20px",
     borderRadius: "8px",
     border: "none",
-    cursor: "pointer",
-    marginTop: "20px"
+    cursor: "pointer"
   },
   retryButton: {
     backgroundColor: "#f97316",
@@ -527,7 +415,12 @@ const styles = {
     borderRadius: "8px",
     border: "none",
     cursor: "pointer"
+  },
+  error: {
+    color: "red",
+    marginTop: "10px"
   }
 };
 
 export default App;
+
