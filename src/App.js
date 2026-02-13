@@ -238,6 +238,7 @@ function App() {
             <li>All ratings are compulsory.</li>
             <li>Section score is calculated automatically.</li>
             <li>Download and upload your PDF.</li>
+            <li>Make sure to hit the "Start Assignment" button down here before starting to answer.</li>
           </ul>
 
           <button
